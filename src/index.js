@@ -19,12 +19,17 @@ function showInput(event) {
   console.log(refs.inpetEl.value.trim());
   const value = refs.inpetEl.value.trim();
   if (value === '') {
-    clearInput();
+    clearRender();
     return;
   }
   fetchCountries(value)
     .then(users => renderUser(users))
-    .catch(error => console.log(error));
+    .catch(error => {
+      if (error) {
+        clearRender(error),
+          Notiflix.Notify.failure('Oops, there is no country with that name');
+      }
+    });
 }
 
 function renderList(users) {
@@ -57,23 +62,23 @@ function renderDiv(users) {
   refs.divEl.innerHTML = markupDiv;
 }
 
+function clearRender() {
+  refs.ulEl.innerHTML = '';
+  refs.divEl.innerHTML = '';
+}
+
 function renderUser(users) {
-  clearInput();
+  clearRender();
   if (users.length > 10) {
     Notiflix.Notify.info(
       'Too many matches found. Please enter a more specific name.'
     );
     return;
   } else if (users.length > 1) {
-    clearInput();
+    clearRender();
     renderList(users);
   } else {
-    clearInput();
+    clearRender();
     renderDiv(users);
   }
-}
-
-function clearInput() {
-  refs.ulEl.innerHTML = '';
-  refs.divEl.innerHTML = '';
 }
